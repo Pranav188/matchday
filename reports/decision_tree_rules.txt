@@ -1,0 +1,22 @@
+|--- elo_difference <= 50.67
+|   |--- elo_difference <= -129.69
+|   |   |--- elo_difference <= -229.64
+|   |   |   |--- class: 2
+|   |   |--- elo_difference >  -229.64
+|   |   |   |--- class: 2
+|   |--- elo_difference >  -129.69
+|   |   |--- elo_difference <= -69.50
+|   |   |   |--- class: 2
+|   |   |--- elo_difference >  -69.50
+|   |   |   |--- class: 1
+|--- elo_difference >  50.67
+|   |--- elo_difference <= 167.88
+|   |   |--- elo_difference <= 125.68
+|   |   |   |--- class: 0
+|   |   |--- elo_difference >  125.68
+|   |   |   |--- class: 0
+|   |--- elo_difference >  167.88
+|   |   |--- elo_difference <= 234.73
+|   |   |   |--- class: 0
+|   |   |--- elo_difference >  234.73
+|   |   |   |--- class: 0

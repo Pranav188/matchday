@@ -1,0 +1,6 @@
+model,training_macro_f1,validation_macro_f1,validation_log_loss,best_params
+decision_tree,0.44488522420243237,0.4646189429406623,1.0173488309248069,"{""classifier__class_weight"": ""balanced"", ""classifier__max_depth"": 3, ""classifier__min_samples_leaf"": 10}"
+random_forest,0.6630461050143277,0.4517844379055285,1.012475051457742,"{""classifier__class_weight"": ""balanced_subsample"", ""classifier__max_depth"": null, ""classifier__min_samples_leaf"": 15, ""classifier__n_estimators"": 200}"
+logistic_regression,0.4313254062379318,0.44636252560896833,1.010710826277657,"{""classifier__C"": 0.1, ""classifier__class_weight"": ""balanced""}"
+xgboost,0.6502415837022963,0.408315094265489,1.0185205340385437,"{""classifier__learning_rate"": 0.1, ""classifier__max_depth"": 5, ""classifier__n_estimators"": 100, ""classifier__subsample"": 0.8}"
+rbf_svm,0.36079234343024197,0.3755680995752916,1.0094506563338665,"{""classifier__estimator__C"": 0.5, ""classifier__estimator__class_weight"": ""balanced"", ""classifier__estimator__gamma"": 0.03}"

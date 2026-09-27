@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "premier-league-match-outcome-predictor"
+version = "0.1.0"
+description = "Leakage-safe classical prediction of Premier League match outcomes"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy==2.5.3",
+    "pandas==3.0.6",
+    "scikit-learn==1.9.1",
+    "xgboost==3.4.1",
+    "matplotlib==3.11.2",
+    "seaborn==0.13.2",
+    "joblib==1.6.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.1.1"]
+
+[project.scripts]
+pl-predictor = "premier_league_predictor.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

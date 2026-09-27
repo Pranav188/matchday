@@ -1,0 +1,560 @@
+{
+  "rows": 12704,
+  "date_start": "1993-08-14",
+  "date_end": "2026-05-24",
+  "seasons": {
+    "1993-94": 462,
+    "1994-95": 462,
+    "1995-96": 380,
+    "1996-97": 380,
+    "1997-98": 380,
+    "1998-99": 380,
+    "1999-00": 380,
+    "2000-01": 380,
+    "2001-02": 380,
+    "2002-03": 380,
+    "2003-04": 380,
+    "2004-05": 380,
+    "2005-06": 380,
+    "2006-07": 380,
+    "2007-08": 380,
+    "2008-09": 380,
+    "2009-10": 380,
+    "2010-11": 380,
+    "2011-12": 380,
+    "2012-13": 380,
+    "2013-14": 380,
+    "2014-15": 380,
+    "2015-16": 380,
+    "2016-17": 380,
+    "2017-18": 380,
+    "2018-19": 380,
+    "2019-20": 380,
+    "2020-21": 380,
+    "2021-22": 380,
+    "2022-23": 380,
+    "2023-24": 380,
+    "2024-25": 380,
+    "2025-26": 380
+  },
+  "duplicate_fixture_rows": 0,
+  "ignored_blank_rows": 697,
+  "missing_required_values": 0,
+  "target_counts": {
+    "H": 5797,
+    "D": 3246,
+    "A": 3661
+  },
+  "target_proportions": {
+    "H": 0.4563129722921914,
+    "D": 0.25551007556675065,
+    "A": 0.28817695214105793
+  },
+  "teams": 51,
+  "source_columns_used": [
+    "date",
+    "hometeam",
+    "awayteam",
+    "fthg",
+    "ftag",
+    "ftr"
+  ],
+  "source_files": [
+    {
+      "file": "0001_E0.csv",
+      "bytes": 62076,
+      "sha256": "e2a73bae006d9724b5343d3735a61f11d258955477e3d87b68346d017edaf46b",
+      "retrieved_at_utc": "2026-09-27T11:30:56+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0102_E0.csv",
+      "bytes": 66230,
+      "sha256": "7a2e26a1a64de18d3b8fd47bca5329613db7b902ea19159817f8285859a1b981",
+      "retrieved_at_utc": "2026-09-27T11:30:58+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0203_E0.csv",
+      "bytes": 72322,
+      "sha256": "32cb2daf8b3a121ad61601506e855a47f646df97252efed1ef83ffa1883c32a1",
+      "retrieved_at_utc": "2026-09-27T11:30:59+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0304_E0.csv",
+      "bytes": 85438,
+      "sha256": "29daeb6ded985034f4cce391e476cf2639e9cff78ad8bf9792794b06de346464",
+      "retrieved_at_utc": "2026-09-27T11:31:00+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0405_E0.csv",
+      "bytes": 85894,
+      "sha256": "85241d09c572dfdf0f03817ceebd9a07d113fd45b7dead1ab6e5a329fd920b2c",
+      "retrieved_at_utc": "2026-09-27T11:31:46+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0506_E0.csv",
+      "bytes": 102129,
+      "sha256": "b497db70d969f2370f1b09d354ca23880e62f0e9b9a641b02591c40b22ab7971",
+      "retrieved_at_utc": "2026-09-27T11:31:47+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0607_E0.csv",
+      "bytes": 102043,
+      "sha256": "947b2c56da7837ccd0d31fa65cf7bca7b78851ce32f7b820c98da0e9d8ee5ca8",
+      "retrieved_at_utc": "2026-09-27T11:31:49+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0708_E0.csv",
+      "bytes": 105683,
+      "sha256": "5945e40bef4334a98f73e71b2e3fa9d075c2c2205d96eb611a1ae8e98511d7f2",
+      "retrieved_at_utc": "2026-09-27T11:31:50+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0809_E0.csv",
+      "bytes": 106205,
+      "sha256": "b78dcd1c522feafb44bcce1c459eb09911618460787cfe9ab478b2957c7ae294",
+      "retrieved_at_utc": "2026-09-27T11:31:51+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "0910_E0.csv",
+      "bytes": 105752,
+      "sha256": "e8349af783aa262dddb1dbb84de088c15bf43e4fae85f6da4ec30a5c4d62c324",
+      "retrieved_at_utc": "2026-09-27T11:31:52+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1011_E0.csv",
+      "bytes": 106586,
+      "sha256": "8f5d37651aca8498d8041088835e3a734b79e2fcc34f66ca8516c650970810ce",
+      "retrieved_at_utc": "2026-09-27T11:31:53+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1112_E0.csv",
+      "bytes": 106303,
+      "sha256": "6cdb9963c311ca2e7d07eb429df721a2593cbd9c9fec55b9af82bca1a457b987",
+      "retrieved_at_utc": "2026-09-27T11:31:54+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1213_E0.csv",
+      "bytes": 113085,
+      "sha256": "1df561d34a9b79ff8cb1fccd4fd279d183e74cd871063a307ecf18f01e0d622f",
+      "retrieved_at_utc": "2026-09-27T11:31:55+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1314_E0.csv",
+      "bytes": 103642,
+      "sha256": "3cf16078fde2e0e6c6cb07ebdb20ca98d1a755c9508a18bbeb4ad6837fad2b42",
+      "retrieved_at_utc": "2026-09-27T11:31:56+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1415_E0.csv",
+      "bytes": 100899,
+      "sha256": "76b7858051ff6b17f46f49f26fdc70c1f29537270492606f5cc63d67fad5d149",
+      "retrieved_at_utc": "2026-09-27T11:31:57+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1516_E0.csv",
+      "bytes": 100656,
+      "sha256": "bd3502a18c38a1597fd9af62e2366b4015006d3528dd4d18b311bd6237bbc085",
+      "retrieved_at_utc": "2026-09-27T11:31:58+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1617_E0.csv",
+      "bytes": 99990,
+      "sha256": "9625a7652b5f98fbd3e2e4d378c851fc246693f3343e34a72428d5b6e864d3e0",
+      "retrieved_at_utc": "2026-09-27T11:32:00+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1718_E0.csv",
+      "bytes": 100734,
+      "sha256": "4f3389365ef3f7ac966764ed8ba67cf3b79f5aebed18dd224099c4b2c98bc67b",
+      "retrieved_at_utc": "2026-09-27T11:32:01+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1819_E0.csv",
+      "bytes": 96144,
+      "sha256": "7c096b3c2ecd54c6993d22eeea73450c2bde11e3457238b226b8f43c62dfc35e",
+      "retrieved_at_utc": "2026-09-27T11:32:02+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "1920_E0.csv",
+      "bytes": 175475,
+      "sha256": "100037618b94f94057400bb02bf6bac4ef74ddaa58cde4b38370839c39caee61",
+      "retrieved_at_utc": "2026-09-27T11:32:03+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2021_E0.csv",
+      "bytes": 175815,
+      "sha256": "5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62",
+      "retrieved_at_utc": "2026-09-27T11:32:04+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2122_E0.csv",
+      "bytes": 175363,
+      "sha256": "335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703",
+      "retrieved_at_utc": "2026-09-27T11:32:05+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2223_E0.csv",
+      "bytes": 176180,
+      "sha256": "8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380",
+      "retrieved_at_utc": "2026-09-27T11:32:07+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2324_E0.csv",
+      "bytes": 172196,
+      "sha256": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+      "retrieved_at_utc": "2026-09-27T11:32:08+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2425_E0.csv",
+      "bytes": 197110,
+      "sha256": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+      "retrieved_at_utc": "2026-09-27T11:32:09+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "2526_E0.csv",
+      "bytes": 203438,
+      "sha256": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62",
+      "retrieved_at_utc": "2026-09-27T11:32:10+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9394_E0.csv",
+      "bytes": 26382,
+      "sha256": "431f64f3272c82df9a25ba6abffc1c427b25947b6ff15c52b66ad77bb623c804",
+      "retrieved_at_utc": "2026-09-27T11:30:50+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9495_E0.csv",
+      "bytes": 26676,
+      "sha256": "1a13a383905b009aa0fac6cd4c92da914c7f0aac2b18f4a3c3574879b623b65d",
+      "retrieved_at_utc": "2026-09-27T11:30:51+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9596_E0.csv",
+      "bytes": 23120,
+      "sha256": "5fced3d4fdd55f2df953cfb55f45c3fc6a1a283a266f0be62b64016c85f631a8",
+      "retrieved_at_utc": "2026-09-27T11:30:52+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9697_E0.csv",
+      "bytes": 23386,
+      "sha256": "9819155cefcbe480fa5f65f64c197598b6975d40f7156a160fa08868c8156e7e",
+      "retrieved_at_utc": "2026-09-27T11:30:53+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9798_E0.csv",
+      "bytes": 21157,
+      "sha256": "edf7b268a490b1a5a5ae4d07d3ef4938d9ba2d85180f7efae0ae8f3646e55615",
+      "retrieved_at_utc": "2026-09-27T11:30:54+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9899_E0.csv",
+      "bytes": 21385,
+      "sha256": "93461480fab8d180584d8b4be7edc58b6b4d861023b04af4a8f8614872aa5196",
+      "retrieved_at_utc": "2026-09-27T11:30:55+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    },
+    {
+      "file": "9900_E0.csv",
+      "bytes": 23504,
+      "sha256": "9e364370db2f58888f241af606f8075ad609a04b5526ddf2d79693c917e7f64c",
+      "retrieved_at_utc": "2026-09-27T11:30:55+00:00",
+      "timestamp_source": "inferred_from_file_mtime",
+      "required_headers": {
+        "date": "Date",
+        "hometeam": "HomeTeam",
+        "awayteam": "AwayTeam",
+        "fthg": "FTHG",
+        "ftag": "FTAG",
+        "ftr": "FTR"
+      }
+    }
+  ],
+  "source_url_template": "https://www.football-data.co.uk/mmz4281/{season}/E0.csv"
+}
