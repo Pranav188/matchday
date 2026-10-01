@@ -37,7 +37,7 @@ def load_context(path):
     ):
         raise ValueError("observed_at must include a timezone")
     frame["observed_at"] = pd.to_datetime(
-        frame["observed_at"], utc=True, errors="raise"
+        frame["observed_at"], format="ISO8601", utc=True, errors="raise"
     )
     if frame[KEYS].isna().any().any():
         raise ValueError("Context keys and timestamps cannot be missing")

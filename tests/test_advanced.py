@@ -313,3 +313,101 @@ def test_model_load_rejects_pointer_version_mismatch(tmp_path):
     )
     with pytest.raises(ValueError, match="version"):
         load_deployment(tmp_path)
+
+
+def test_context_handles_mixed_timestamp_precision_and_timezone(tmp_path):
+    path = tmp_path / "context.csv"
+    row = {
+        "fixture_date": "2024-08-08",
+        "home_team": "Arsenal",
+        "away_team": "Chelsea",
+        "team": "Arsenal",
+        "observed_at": "2024-08-07T12:00:00Z",
+        "missing_minutes_share": 0.2,
+    }
+    pd.DataFrame(
+        [
+            row,
+            {
+                **row,
+                "observed_at": "2024-08-07T14:00:00.123456+01:00",
+                "missing_minutes_share": 0.4,
+            },
+        ]
+    ).to_csv(path, index=False)
+    loaded = load_context(path)
+    assert (
+        context_features(loaded, "2024-08-08", "Arsenal", "Chelsea")[
+            "home_missing_minutes_share"
+        ]
+        == 0.4
+    )
+
+
+def test_context_cli_validates_and_atomically_imports(tmp_path, monkeypatch):
+    import sys
+    from premier_league_predictor.cli import main
+
+    source = tmp_path / "supplied.csv"
+    pd.DataFrame(
+        [
+            {
+                "fixture_date": "2024-08-08",
+                "home_team": "Arsenal",
+                "away_team": "Chelsea",
+                "team": "Arsenal",
+                "observed_at": "2024-08-07T12:00:00Z",
+                "manager_days": 30,
+            }
+        ]
+    ).to_csv(source, index=False)
+    monkeypatch.setattr("premier_league_predictor.api._project_root", lambda: tmp_path)
+    monkeypatch.setattr(
+        sys, "argv", ["pl-predictor", "context", "--context-file", str(source)]
+    )
+    main()
+    imported = load_context(tmp_path / "data/context/fixtures.csv")
+    assert imported.manager_days.iloc[0] == 30
+    assert not (tmp_path / "data/context/fixtures.tmp").exists()
+
+
+@pytest.mark.parametrize(
+    "extra",
+    [{"missing_attackers": 1.5}, {"all_matches_last7": 3, "all_matches_last14": 2}],
+)
+def test_context_rejects_invalid_counts_and_workload(tmp_path, extra):
+    path = tmp_path / "context.csv"
+    row = {
+        "fixture_date": "2024-08-08",
+        "home_team": "Arsenal",
+        "away_team": "Chelsea",
+        "team": "Arsenal",
+        "observed_at": "2024-08-07T12:00:00Z",
+        **extra,
+    }
+    pd.DataFrame([row]).to_csv(path, index=False)
+    with pytest.raises(ValueError):
+        load_context(path)
+
+
+def test_concurrent_forecasts_are_saved_only_once(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+
+    store = ForecastStore(tmp_path / "history.sqlite")
+    fixture = {"id": "one", "kickoff": "2026-08-01T15:00:00+00:00", "finished": False}
+    forecast = {
+        "fixture_id": "one",
+        "predicted_at": "2026-08-01T12:00:00+00:00",
+        "model_version": "v1",
+        "probabilities": [
+            {"probability": 0.6},
+            {"probability": 0.2},
+            {"probability": 0.2},
+        ],
+    }
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        records = list(
+            pool.map(lambda _: store.save(forecast, fixture, {"form": 3}), range(12))
+        )
+    assert len({record["archive_id"] for record in records}) == 1
+    assert store.list()["total"] == 1

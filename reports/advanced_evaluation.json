@@ -1614,7 +1614,7 @@
             "D",
             "A"
           ],
-          "log_loss": 0.9361651893023633,
+          "log_loss": 0.9361651893023631,
           "macro_ovr_roc_auc": 0.7044911575749868,
           "brier_score": 0.5499056388298107
         },
@@ -1800,8 +1800,8 @@
     "protocol": "Retrospective benchmark; original 2025/26 results were already inspected. Future saved forecasts are the prospective evaluation."
   },
   "deployment": {
-    "version": "369955daa5b46464",
-    "created_at": "2026-10-01T14:12:24.478415+00:00",
+    "version": "4d3c0854baea46bf",
+    "created_at": "2026-10-01T14:25:24.284244+00:00",
     "data_through": "2026-09-20",
     "training_matches": 12754,
     "history_matches": 12754,
