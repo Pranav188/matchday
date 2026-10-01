@@ -31,3 +31,8 @@ web/tsconfig.tsbuildinfo
 !.env.example
 *.pem
 *.key
+
+# Local forecast archive and imported provider data
+data/history/
+data/context/*
+!data/context/.gitkeep

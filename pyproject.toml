@@ -9,6 +9,7 @@ description = "Leakage-safe classical prediction of Premier League match outcome
 requires-python = ">=3.12"
 dependencies = [
     "numpy==2.5.3",
+    "scipy==1.18.1",
     "pandas==3.0.6",
     "scikit-learn==1.9.1",
     "xgboost==3.4.1",

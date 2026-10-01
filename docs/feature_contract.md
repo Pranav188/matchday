@@ -26,3 +26,12 @@ Exclude current-fixture goals, half-time results, shots, corners, cards, odds, a
 ## Future-Fixture Inference
 
 For deployment forecasts, fit the validation-selected model on all completed matches currently available after the evaluation protocol is frozen. This may include the historical 2025/26 holdout; its published test metrics remain the fixed historical benchmark. Build the requested fixture's feature row from matches dated strictly before its fixture date. Do not update form, rest, head-to-head, or Elo state with an assumed result. Reject fixture dates on or before the latest result in the loaded data. Unplayed rows in a current-season source CSV are not training examples.
+
+
+## Extended deployment features
+
+The original study's result-only features and metrics remain frozen. `train` enables optional historical shots and shots-on-target columns (`HS`, `AS`, `HST`, `AST`) and constructs rolling averages **after** completed matches update state. Current-fixture shots never enter its feature row. Missing source statistics are kept missing, and medians are learned within the training period. Recent attacking/defensive shot statistics use five prior matches; additional form summaries use three and ten prior matches. League workload counts matches in `[fixture date - 7/14 days, fixture date)`.
+
+The deployment model is selected by probability quality on recent chronological validation seasons. Optional context obeys the separate timestamped contract. The Poisson goals models estimate home and away goal counts independently, so their scoreline probabilities may differ from the outcome classifier's probabilities. They share the same pre-match features and report a separate retrospective goals-error benchmark.
+
+The new 2025/26 comparison is explicitly retrospective because this season was already inspected. The original held-out report is preserved; forecasts saved before actual future kickoff provide the prospective evaluation. Calibration reserves a later season inside each training period, never the validation/test season. Saved model artifacts include historical state and source hashes, with an atomic pointer for reloads.

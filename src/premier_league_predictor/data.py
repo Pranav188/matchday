@@ -12,7 +12,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-
 SOURCE_COLUMNS = {
     "date": "date",
     "hometeam": "home_team",
@@ -30,6 +29,12 @@ CANONICAL_COLUMNS = [
     "away_goals",
     "target",
 ]
+OPTIONAL_COLUMNS = {
+    "hs": "home_shots",
+    "as": "away_shots",
+    "hst": "home_shots_on_target",
+    "ast": "away_shots_on_target",
+}
 CLASS_ORDER = ("H", "D", "A")
 SEASON_FILENAME_PATTERN = re.compile(r"^(\d{4})_E0$", flags=re.IGNORECASE)
 
@@ -39,7 +44,9 @@ def season_from_filename(path: str | Path) -> str:
     stem = Path(path).stem
     match = SEASON_FILENAME_PATTERN.fullmatch(stem)
     if not match:
-        raise ValueError(f"Expected a season filename like 2526_E0.csv, got: {Path(path).name}")
+        raise ValueError(
+            f"Expected a season filename like 2526_E0.csv, got: {Path(path).name}"
+        )
 
     code = match.group(1)
     start_suffix = int(code[:2])
@@ -47,15 +54,19 @@ def season_from_filename(path: str | Path) -> str:
     return f"{start_year}-{(start_year + 1) % 100:02d}"
 
 
-def _read_csv(path: Path) -> pd.DataFrame:
-    usecols = lambda name: str(name).replace("\ufeff", "").strip().lower() in SOURCE_COLUMNS
+def _read_csv(path: Path, include_statistics: bool = False) -> pd.DataFrame:
+    usecols = lambda name: str(name).replace("\ufeff", "").strip().lower() in (
+        SOURCE_COLUMNS | (OPTIONAL_COLUMNS if include_statistics else {})
+    )
     try:
         return pd.read_csv(path, encoding="utf-8-sig", usecols=usecols)
     except UnicodeDecodeError:
         return pd.read_csv(path, encoding="cp1252", usecols=usecols)
 
 
-def canonicalize_season(frame: pd.DataFrame, source: str | Path) -> pd.DataFrame:
+def canonicalize_season(
+    frame: pd.DataFrame, source: str | Path, include_statistics: bool = False
+) -> pd.DataFrame:
     """Select the result-only source fields and validate labels against full-time goals."""
     season = season_from_filename(source)
     original_columns = {
@@ -64,10 +75,15 @@ def canonicalize_season(frame: pd.DataFrame, source: str | Path) -> pd.DataFrame
     }
     missing = sorted(set(SOURCE_COLUMNS) - set(original_columns))
     if missing:
-        raise ValueError(f"{Path(source).name} is missing required columns: {', '.join(missing)}")
+        raise ValueError(
+            f"{Path(source).name} is missing required columns: {', '.join(missing)}"
+        )
 
     selected = pd.DataFrame(
-        {canonical: frame[original_columns[source_name]] for source_name, canonical in SOURCE_COLUMNS.items()}
+        {
+            canonical: frame[original_columns[source_name]]
+            for source_name, canonical in SOURCE_COLUMNS.items()
+        }
     )
     blank_rows = selected.isna().all(axis=1)
     ignored_blank_rows = int(blank_rows.sum())
@@ -118,7 +134,10 @@ def canonicalize_season(frame: pd.DataFrame, source: str | Path) -> pd.DataFrame
         )
 
     expected_target = np.select(
-        [selected["home_goals"] > selected["away_goals"], selected["home_goals"] == selected["away_goals"]],
+        [
+            selected["home_goals"] > selected["away_goals"],
+            selected["home_goals"] == selected["away_goals"],
+        ],
         ["H", "D"],
         default="A",
     )
@@ -130,27 +149,56 @@ def canonicalize_season(frame: pd.DataFrame, source: str | Path) -> pd.DataFrame
 
     selected["home_goals"] = selected["home_goals"].astype(int)
     selected["away_goals"] = selected["away_goals"].astype(int)
-    canonical = selected[CANONICAL_COLUMNS].sort_values("date", kind="stable").reset_index(drop=True)
+    canonical = (
+        selected[CANONICAL_COLUMNS]
+        .sort_values("date", kind="stable")
+        .reset_index(drop=True)
+    )
+    if include_statistics:
+        for source_name, canonical_name in OPTIONAL_COLUMNS.items():
+            values = (
+                pd.to_numeric(frame[original_columns[source_name]], errors="raise")
+                if source_name in original_columns
+                else pd.Series(np.nan, index=frame.index)
+            )
+            if ((values.dropna() < 0) | (values.dropna() % 1 != 0)).any():
+                raise ValueError(f"Invalid counts in {canonical_name}")
+            canonical[canonical_name] = values.loc[
+                selected.sort_values("date", kind="stable").index
+            ].to_numpy()
     canonical.attrs["ignored_blank_rows"] = ignored_blank_rows
     canonical.attrs["ignored_unplayed_fixtures"] = ignored_unplayed_fixtures
     return canonical
 
 
-def load_matches(data_dir: str | Path) -> pd.DataFrame:
+def load_matches(
+    data_dir: str | Path, include_statistics: bool = False
+) -> pd.DataFrame:
     """Load all downloaded ``*_E0.csv`` files in chronological order."""
     directory = Path(data_dir)
     paths = sorted(directory.glob("*_E0.csv"))
     if not paths:
-        raise FileNotFoundError(f"No season files matching *_E0.csv found in {directory}")
+        raise FileNotFoundError(
+            f"No season files matching *_E0.csv found in {directory}"
+        )
 
-    seasons = [canonicalize_season(_read_csv(path), path) for path in paths]
-    ignored_blank_rows = sum(int(season.attrs.get("ignored_blank_rows", 0)) for season in seasons)
+    seasons = [
+        canonicalize_season(
+            _read_csv(path, include_statistics), path, include_statistics
+        )
+        for path in paths
+    ]
+    ignored_blank_rows = sum(
+        int(season.attrs.get("ignored_blank_rows", 0)) for season in seasons
+    )
     ignored_unplayed_fixtures = sum(
         int(season.attrs.get("ignored_unplayed_fixtures", 0)) for season in seasons
     )
-    matches = pd.concat(seasons, ignore_index=True).sort_values(
-        ["date", "home_team", "away_team"], kind="stable"
-    ).reset_index(drop=True)
+    matches = (
+        pd.concat(seasons, ignore_index=True)
+        .sort_values(["date", "home_team", "away_team"], kind="stable")
+        .reset_index(drop=True)
+    )
     matches.attrs["ignored_blank_rows"] = ignored_blank_rows
     matches.attrs["ignored_unplayed_fixtures"] = ignored_unplayed_fixtures
     return matches
@@ -168,7 +216,9 @@ def audit_matches(matches: pd.DataFrame) -> dict[str, Any]:
         "seasons": {str(season): int(count) for season, count in season_counts.items()},
         "duplicate_fixture_rows": int(duplicate_rows.sum()),
         "ignored_blank_rows": int(matches.attrs.get("ignored_blank_rows", 0)),
-        "ignored_unplayed_fixtures": int(matches.attrs.get("ignored_unplayed_fixtures", 0)),
+        "ignored_unplayed_fixtures": int(
+            matches.attrs.get("ignored_unplayed_fixtures", 0)
+        ),
         "missing_required_values": 0,
         "target_counts": {label: int(counts[label]) for label in CLASS_ORDER},
         "target_proportions": {
@@ -191,7 +241,9 @@ def source_manifest(data_dir: str | Path) -> list[dict[str, Any]]:
     directory = Path(data_dir)
     metadata_path = directory / ".download_manifest.json"
     retrieval_metadata = (
-        json.loads(metadata_path.read_text(encoding="utf-8")) if metadata_path.exists() else {}
+        json.loads(metadata_path.read_text(encoding="utf-8"))
+        if metadata_path.exists()
+        else {}
     )
     manifest = []
     for path in sorted(directory.glob("*_E0.csv")):
@@ -200,7 +252,12 @@ def source_manifest(data_dir: str | Path) -> list[dict[str, Any]]:
         except UnicodeDecodeError:
             headers = pd.read_csv(path, nrows=0, encoding="cp1252").columns
         actual_headers = {
-            str(column).replace("\ufeff", "").strip().lower(): str(column).replace("\ufeff", "").strip()
+            str(column)
+            .replace("\ufeff", "")
+            .strip()
+            .lower(): str(column)
+            .replace("\ufeff", "")
+            .strip()
             for column in headers
         }
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
@@ -219,7 +276,8 @@ def source_manifest(data_dir: str | Path) -> list[dict[str, Any]]:
                 "sha256": digest,
                 **retrieval,
                 "required_headers": {
-                    source_name: actual_headers[source_name] for source_name in SOURCE_COLUMNS
+                    source_name: actual_headers[source_name]
+                    for source_name in SOURCE_COLUMNS
                 },
             }
         )

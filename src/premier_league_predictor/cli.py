@@ -5,7 +5,12 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from premier_league_predictor.data import audit_matches, load_matches, source_manifest, write_audit
+from premier_league_predictor.data import (
+    audit_matches,
+    load_matches,
+    source_manifest,
+    write_audit,
+)
 from premier_league_predictor.constants import MODEL_DISPLAY_NAMES
 from premier_league_predictor.download import BASE_URL, download_seasons
 from premier_league_predictor.features import build_pre_match_features
@@ -15,20 +20,36 @@ def _parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="pl-predictor")
     commands = parser.add_subparsers(dest="command", required=True)
 
-    download = commands.add_parser("download", help="download historical E0 season CSVs")
+    download = commands.add_parser(
+        "download", help="download historical E0 season CSVs"
+    )
     download.add_argument("--data-dir", default="data/raw")
     download.add_argument("--from-year", type=int, default=1993)
     download.add_argument("--through-year", type=int, default=2026)
     download.add_argument("--force", action="store_true")
 
-    fixtures = commands.add_parser("fixtures", help="refresh the complete 2026/27 schedule")
+    fixtures = commands.add_parser(
+        "fixtures", help="refresh the complete 2026/27 schedule"
+    )
     fixtures.add_argument("--output", default="data/fixtures/2026-27.json")
 
-    audit = commands.add_parser("audit", help="validate and summarize local season CSVs")
+    for name, help_text in [
+        ("train", "evaluate richer features and save a deployment model"),
+        ("refresh", "refresh fixtures/results/public availability and retrain"),
+        ("availability", "snapshot current public player availability"),
+        ("context", "validate a pre-match context CSV"),
+    ]:
+        command = commands.add_parser(name, help=help_text)
+        command.add_argument("--context-file", default="data/context/fixtures.csv")
+    audit = commands.add_parser(
+        "audit", help="validate and summarize local season CSVs"
+    )
     audit.add_argument("--data-dir", default="data/raw")
     audit.add_argument("--output", default="reports/data_audit.json")
 
-    evaluate = commands.add_parser("evaluate", help="tune on earlier seasons and test on 2025/26")
+    evaluate = commands.add_parser(
+        "evaluate", help="tune on earlier seasons and test on 2025/26"
+    )
     evaluate.add_argument("--data-dir", default="data/raw")
     evaluate.add_argument("--reports-dir", default="reports")
     evaluate.add_argument("--models-dir", default="models")
@@ -39,8 +60,48 @@ def _parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = _parser().parse_args()
+    if args.command in {"train", "refresh", "availability", "context"}:
+        from premier_league_predictor.api import _project_root
+
+        root = _project_root()
+        if args.command == "context":
+            from premier_league_predictor.context import load_context
+
+            frame = load_context(args.context_file)
+            if not Path(args.context_file).exists():
+                raise FileNotFoundError("Supply --context-file with an existing CSV")
+            destination = root / "data/context/fixtures.csv"
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            temporary = destination.with_suffix(".tmp")
+            frame.to_csv(temporary, index=False)
+            temporary.replace(destination)
+            print(
+                f"Imported {len(frame)} timestamped context snapshots. Run train to update the model; the API reloads it automatically."
+            )
+            return
+        if args.command in {"refresh", "availability"}:
+            from premier_league_predictor.availability import refresh_availability
+
+            refresh_availability(root / "data/context/availability.json")
+            if args.command == "availability":
+                return
+        if args.command == "refresh":
+            from premier_league_predictor.fixtures import refresh_schedule
+
+            refresh_schedule(root / "data/fixtures/2026-27.json")
+            download_seasons(
+                root / "data/raw", start_year=2026, end_year=2026, force=True
+            )
+        from premier_league_predictor.deployment import train_deployment
+
+        metadata = train_deployment(root, context_path=args.context_file)
+        print(
+            f"Saved {metadata['kind']} deployment {metadata['version']} through {metadata['data_through']}"
+        )
+        return
     if args.command == "fixtures":
         from premier_league_predictor.fixtures import refresh_schedule
+
         print(f"Saved 380 fixtures to {refresh_schedule(args.output)}")
         return
     if args.command == "download":
@@ -76,7 +137,9 @@ def main() -> None:
     reports_dir = Path(args.reports_dir)
     write_audit(audit, reports_dir / "data_audit.json")
     if audit["duplicate_fixture_rows"]:
-        raise ValueError("Duplicate fixtures were found; inspect reports/data_audit.json before evaluation")
+        raise ValueError(
+            "Duplicate fixtures were found; inspect reports/data_audit.json before evaluation"
+        )
     from premier_league_predictor.modeling import run_model_comparison
     from premier_league_predictor.reporting import write_project_report
 
@@ -92,7 +155,9 @@ def main() -> None:
         n_splits=args.n_splits,
         n_jobs=args.n_jobs,
     )
-    write_project_report(audit, result, audit["source_files"], reports_dir / "project_report.md")
+    write_project_report(
+        audit, result, audit["source_files"], reports_dir / "project_report.md"
+    )
     print("\nValidation comparison")
     print(result["validation_comparison"].to_string(index=False))
     print("\nElo ablation")

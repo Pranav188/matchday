@@ -5,15 +5,9 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-import matplotlib
-
-matplotlib.use("Agg")
-
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import (
     accuracy_score,
-    balanced_accuracy_score,
     cohen_kappa_score,
     confusion_matrix,
     f1_score,
@@ -51,23 +45,43 @@ def classification_metrics(
     matrix = confusion_matrix(actual, predicted, labels=CLASS_IDS)
     metrics: dict[str, Any] = {
         "accuracy": float(accuracy_score(actual, predicted)),
-        "balanced_accuracy": float(balanced_accuracy_score(actual, predicted)),
-        "macro_f1": float(
-            f1_score(actual, predicted, labels=CLASS_IDS, average="macro", zero_division=0)
+        "balanced_accuracy": float(
+            np.mean(
+                recall_score(
+                    actual,
+                    predicted,
+                    labels=np.unique(actual),
+                    average=None,
+                    zero_division=0,
+                )
+            )
         ),
-        "cohen_kappa": float(cohen_kappa_score(actual, predicted)),
+        "macro_f1": float(
+            f1_score(
+                actual, predicted, labels=CLASS_IDS, average="macro", zero_division=0
+            )
+        ),
+        "cohen_kappa": (
+            float(cohen_kappa_score(actual, predicted, labels=CLASS_IDS))
+            if len(np.unique(np.concatenate([actual, predicted]))) > 1
+            else None
+        ),
         "precision_by_class": {
             name: float(value)
             for name, value in zip(
                 CLASS_NAMES,
-                precision_score(actual, predicted, labels=CLASS_IDS, average=None, zero_division=0),
+                precision_score(
+                    actual, predicted, labels=CLASS_IDS, average=None, zero_division=0
+                ),
             )
         },
         "recall_by_class": {
             name: float(value)
             for name, value in zip(
                 CLASS_NAMES,
-                recall_score(actual, predicted, labels=CLASS_IDS, average=None, zero_division=0),
+                recall_score(
+                    actual, predicted, labels=CLASS_IDS, average=None, zero_division=0
+                ),
             )
         },
         "confusion_matrix": matrix.astype(int).tolist(),
@@ -77,7 +91,13 @@ def classification_metrics(
         metrics["log_loss"] = float(log_loss(actual, probabilities, labels=CLASS_IDS))
         if set(np.unique(actual)) == set(CLASS_IDS):
             metrics["macro_ovr_roc_auc"] = float(
-                roc_auc_score(actual, probabilities, labels=CLASS_IDS, multi_class="ovr", average="macro")
+                roc_auc_score(
+                    actual,
+                    probabilities,
+                    labels=CLASS_IDS,
+                    multi_class="ovr",
+                    average="macro",
+                )
             )
         else:
             metrics["macro_ovr_roc_auc"] = None
@@ -87,7 +107,14 @@ def classification_metrics(
     return metrics
 
 
-def save_confusion_matrix(metrics: dict[str, Any], path: str | Path, title: str) -> Path:
+def save_confusion_matrix(
+    metrics: dict[str, Any], path: str | Path, title: str
+) -> Path:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     matrix = np.asarray(metrics["confusion_matrix"])
@@ -120,16 +147,29 @@ def save_confusion_matrix(metrics: dict[str, Any], path: str | Path, title: str)
     return destination
 
 
-def save_roc_curves(actual: np.ndarray, probabilities: np.ndarray, path: str | Path) -> Path:
+def save_roc_curves(
+    actual: np.ndarray, probabilities: np.ndarray, path: str | Path
+) -> Path:
+    import matplotlib
+
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     one_vs_rest = label_binarize(actual, classes=CLASS_IDS)
     figure, axis = plt.subplots(figsize=(6, 5))
     for class_id, name in enumerate(CLASS_NAMES):
-        false_positive_rate, true_positive_rate, _ = roc_curve(one_vs_rest[:, class_id], probabilities[:, class_id])
+        false_positive_rate, true_positive_rate, _ = roc_curve(
+            one_vs_rest[:, class_id], probabilities[:, class_id]
+        )
         axis.plot(false_positive_rate, true_positive_rate, label=name)
     axis.plot([0, 1], [0, 1], linestyle="--", color="gray", linewidth=1)
-    axis.set(xlabel="False positive rate", ylabel="True positive rate", title="Final-season one-vs-rest ROC")
+    axis.set(
+        xlabel="False positive rate",
+        ylabel="True positive rate",
+        title="Final-season one-vs-rest ROC",
+    )
     axis.legend(title="Actual class", loc="lower right")
     figure.tight_layout()
     figure.savefig(destination, dpi=180)
