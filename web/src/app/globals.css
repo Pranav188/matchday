@@ -122,3 +122,30 @@ ul { margin: 0; padding: 0; list-style: none; }
 .predict-button { transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease; }
 @starting-style { .disclosure-open { grid-template-rows: 0fr; opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .disclosure, .disclosure-chevron, .predict-button { transition: none; } .prediction-spinner { animation: none; } }
+
+.view-tabs { display: flex; gap: 24px; margin-bottom: 18px; }
+.view-tabs button { background: none; border: 0; border-bottom: 2px solid transparent; padding: 8px 0; color: var(--muted); font-size: 14px; }
+.view-tabs button[aria-pressed="true"] { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.contribution-list { margin: 18px 0; font-size: 12px; }
+.contribution-list li { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.contribution-list strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+.goal-summary { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); font-size: 12px; }
+.goal-summary > strong { margin-left: 16px; font-size: 17px; }
+.goal-summary p { margin: 9px 0 4px; }
+.goal-summary small { color: var(--muted); font-size: 11px; }
+.match-factors { margin-top: 16px; }
+.factor-table { width: 100%; border-collapse: collapse; font-size: 12px; margin: 18px 0; }
+.factor-table caption { text-align: left; color: var(--muted); margin-bottom: 10px; font-size: 11px; }
+.factor-table th, .factor-table td { text-align: left; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.factor-table th { font-weight: 500; }
+.match-factors h4 { font-size: 13px; }
+.availability-list { font-size: 12px; }
+.availability-list li { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; }
+.availability-list span { color: var(--muted); }
+.history-summary { margin: 24px 0 8px; font-size: 13px; }
+.history-row { display: flex; justify-content: space-between; gap: 20px; padding: 22px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.history-row div { display: flex; flex-direction: column; gap: 6px; }
+.history-row span { color: var(--muted); font-size: 11px; }
+@media (max-width: 700px) { .history-row { flex-direction: column; gap: 12px; } .availability-list li { flex-direction: column; gap: 3px; } }
+
+@media (max-width: 380px) { .fixture-toolbar { gap: 8px; } .team-filter { min-width: 0; } .team-filter select { max-width: 110px; } }
