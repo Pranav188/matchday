@@ -1,0 +1,10 @@
+.git
+.venv
+web/node_modules
+web/.next
+data/raw
+data/processed
+data/history
+data/context
+models
+.env*

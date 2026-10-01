@@ -1,0 +1,24 @@
+services:
+  api:
+    build: .
+    volumes:
+      - ./models:/app/models:ro
+      - ./data/fixtures:/app/data/fixtures:ro
+      - ./data/context:/app/data/context:ro
+      - forecast_history:/app/data/history
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+  web:
+    build: ./web
+    environment:
+      PREDICTOR_API_URL: http://api:8000
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  forecast_history:

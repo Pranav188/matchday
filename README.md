@@ -1,8 +1,8 @@
-# Premier League Match Outcome Predictor
+# Matchday
 
 A reproducible, pre-kickoff machine-learning study of English Premier League results: **home win (`H`), draw (`D`), or away win (`A`)**. The pipeline uses historical results and compares five classical classifiers. It is designed to make feature timing, evaluation choices, and limitations inspectable.
 
-## Held-out result
+## Original held-out study
 
 The model was selected using earlier seasons and evaluated once on all 380 fixtures in the reserved 2025/26 season.
 
@@ -29,37 +29,60 @@ The validation-only Elo ablation changed mean macro F1 from 0.368 without Elo to
 
 The key methodological safeguard is explicit feature availability: same-fixture performance statistics are excluded, and every feature uses completed matches from earlier dates only. Fixtures on one date are also kept together during validation.
 
-## Interactive forecast UI
+## Matchday application
 
-The `web/` app is a Next.js and React interface for the same Python model. Browse the complete 2026/27 schedule by matchweek or club, then click **Predict** beside an upcoming fixture. Teams and kickoff dates come from the stored schedule; no manual date entry is required. Completed matches show their scores. The service retrains the validation-selected Decision Tree on all completed results currently on disk; it rejects dates on or before the latest result so a forecast cannot use a match outcome from its own future. The 2025/26 holdout metrics remain the historical benchmark even when that season is later included in the deployment model.
+Browse all 380 Premier League 2026/27 fixtures and predict an upcoming match without entering a date. The interface shows outcome probabilities, a separate Poisson goals estimate with likely scores, recent shots and league workload, model explanations, and an archive of forecasts saved before kickoff. Probability estimates and scorelines are uncertain forecasts.
 
-To run both services locally, first install the Python dependencies as described below. In one terminal, from the repository root:
+The new probability-focused experiment compares Logistic Regression, Random Forest, raw and temporally calibrated trees over 5-year, 10-year and full-history training windows. Rolling features include previous 3/5/10-match points, shots, shots on target, defensive shot pressure, and 7/14-day league workload. Model selection uses mean validation log loss, then Brier score, on 2022/23--2024/25 seasons. The saved deployment artifact includes source hashes, feature schema, model version, historical state and goals models. The API loads it without retraining or replaying history per request.
 
-```sh
-python -m pip install --no-deps -e .
-python -m premier_league_predictor download --through-year 2026
-python -m premier_league_predictor fixtures
-python -m premier_league_predictor.api
-```
+The [advanced evaluation](reports/advanced_evaluation.json) records all experiments, probability baselines and a **retrospective** 2025/26 benchmark. That season was already inspected during the original study, so this is not a new blind test. The [reliability diagram](reports/probability_reliability.png) compares forecast probabilities with observed frequencies. The original study and report above remain unchanged. New prospective performance is measured using the earliest saved forecast per fixture, even when models are updated.
 
-The downloader includes the in-progress 2026/27 season. Scheduled rows without a result are ignored; completed results update the model's form and Elo history. The `fixtures` command refreshes all 380 fixtures from Fixture Download and validates the complete schedule before replacing the snapshot. Restart the Python service after refreshing results or fixtures. The checked-in snapshot allows the fixture browser to work without fetching an external schedule at runtime.
+The current deployment selects full-history Logistic Regression. Its retrospective accuracy is **48.4%** (always-home: **42.6%**), macro F1 **0.358**, log loss **1.047**, and Brier score **0.627**. Compared with the original tree, accuracy is higher and macro F1 is lower. No draws were selected as the most likely class in this benchmark. Draw probabilities are still estimated; this model does not establish reliable draw classification or future improvement. The separate goals model has mean absolute errors of **0.950 home goals** and **0.832 away goals** on the same retrospective season.
 
-In a second terminal:
+### Start and stop
+
+Install Python dependencies using the setup below, then:
 
 ```sh
-cd web
-npm ci
-npm run dev
+python -m premier_league_predictor download
+python -m premier_league_predictor train
+npm --prefix web ci
+./scripts/dev.sh
 ```
 
-Open the local URL printed by Next.js. `PREDICTOR_API_URL` can point the Next.js server to a separately hosted Python API; it defaults to `http://127.0.0.1:8000`.
+Open http://localhost:3000. Ctrl+C stops both services. Alternatively, run `python -m premier_league_predictor.api` in one terminal and `npm --prefix web run dev` in another. For a production preview, use `npm --prefix web run build` followed by `npm --prefix web run start`.
 
-Kickoff times are displayed in UK time, including daylight-saving changes. Only unstarted fixtures can be predicted; completed games are not retrospective forecasts. Deployment probabilities use the latest local completed results, rather than simulated future results, so forecasts for later matchweeks should be refreshed as the season progresses. Each forecast includes an optional **Model evidence** section: the exact fitted-tree decision path, feature values (with median-imputed values identified), training leaf support, and the frozen 2025/26 held-out confusion matrix and baseline accuracy. Leaf probabilities use class-weighted training outcomes. The historical benchmark was evaluated before the deployment refit and does not establish correctness for an individual fixture.
+### Refresh and external context
+
+```sh
+python -m premier_league_predictor refresh
+# Optional scheduler: refresh immediately, then every 24 hours.
+python scripts/refresh.py
+# Validate/import timestamped external context, then retrain.
+python -m premier_league_predictor context --context-file /path/to/context.csv
+python -m premier_league_predictor train
+```
+
+The running API reloads atomic model, fixture and context updates on its next request. Imported injury/suspension, expected lineup, manager and all-competition workload features follow the [context data contract](docs/context-data.md), with a [CSV header template](docs/context.example.csv). Missing information remains unknown. Historical coverage is required before external factors can influence training; the current trained model has **no learned injury or lineup effects**. Public FPL availability snapshots are informational, expire after 48 hours, and are displayed only for fixtures within seven days.
+
+Forecasts are stored locally in `data/history/forecasts.sqlite`, excluded from Git. Each record captures prediction time, kickoff, feature values, probabilities, model version and data cutoff. Completed results are reconciled when fixture snapshots refresh. Viewing past predictions never regenerates them using later results.
+
+### Containers and deployment
+
+After training a local artifact:
+
+```sh
+docker compose up --build
+# From another terminal:
+docker compose down
+```
+
+Only the web service is exposed, at localhost:3000. The API model volume is read-only, and a named volume persists forecast history. For a public demonstration, host these services behind your platform's HTTPS endpoint and supply persistent model/context/history volumes. No public deployment has been provisioned. CI runs Python tests and frontend type/build checks on pushes and pull requests.
 
 ## Project layout
 
 ```text
-src/premier_league_predictor/  downloader, validation, features, model API, reports
+src/premier_league_predictor/  features, evaluation, deployment models, API, history
 web/                           Next.js and React forecast interface
 tests/                         data, feature-timing, and date-split checks
 docs/                          pre-kickoff feature contract
