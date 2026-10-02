@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MatchdayHeader } from "./matchday-header";
 
 type Fixture = {
   id: string;
@@ -349,12 +350,7 @@ export function ForecastDashboard() {
 
   return (
     <main className="season-page">
-      <header className="masthead">
-        <a className="wordmark" href="/" aria-label="Matchday home">
-          matchday<span aria-hidden="true">.</span>
-        </a>
-        <span className="masthead-note">Match predictions</span>
-      </header>
+      <MatchdayHeader active="fixtures" />
       <section aria-labelledby="season-heading" className="fixtures-section">
         <div className="season-heading">
           <div>

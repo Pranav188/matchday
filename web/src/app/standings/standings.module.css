@@ -1,0 +1,18 @@
+.section { padding: 52px 0 32px; }
+.heading { margin: 0 0 10px; font-size: 26px; font-weight: 650; letter-spacing: -.6px; }
+.intro { margin: 0 0 30px; max-width: 600px; font-size: 14px; line-height: 1.6; color: var(--muted); }
+.tableContainer { width: 100%; }
+.table { border-collapse: collapse; width: 100%; border-top: 2px solid var(--ink); font-size: 14px; font-variant-numeric: tabular-nums; }
+.table thead th { color: var(--muted); font-weight: 500; font-size: 12px; padding: 16px 12px; }
+.table th, .table td { border-bottom: 1px solid var(--line); text-align: right; padding: 18px 12px; }
+.table th:nth-child(2), .table tbody th { text-align: left; }
+.table tbody th { font-weight: 600; width: 55%; }
+.table .position { text-align: left; color: var(--muted); width: 46px; padding-left: 0; }
+.table th:last-child, .table td:last-child { padding-right: 0; }
+.table .points { color: var(--accent); font-size: 18px; font-weight: 650; }
+.table tbody tr:hover { background: var(--wash); }
+.notes { padding-top: 22px; color: var(--muted); font-size: 12px; line-height: 1.65; max-width: 630px; }
+.notes p { margin: 0 0 10px; }
+.notes .provenance { font-size: 11px; }
+@media (max-width: 700px) { .section { padding-top: 34px; } .heading { font-size: 23px; } .table { font-size: 13px; } .table th, .table td { padding: 17px 7px; } .table thead th { padding: 14px 7px; } .table tbody th { width: auto; } .table .position { width: 26px; padding-left: 0; } .table .points { font-size: 16px; } }
+@media (max-width: 380px) { .table { font-size: 12px; } .table th, .table td, .table thead th { padding-left: 5px; padding-right: 5px; } .table th:last-child, .table td:last-child { padding-right: 0; } }

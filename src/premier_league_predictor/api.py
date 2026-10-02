@@ -127,6 +127,62 @@ class PredictorService:
             self.schedule_mtime = mtime
             self.store.reconcile(schedule["fixtures"])
 
+    def standings(self):
+        """Calculate a season projection without saving individual match forecasts."""
+        from datetime import datetime, timezone
+        from premier_league_predictor.context import context_features
+        from premier_league_predictor.evaluation import classifier_probabilities
+        from premier_league_predictor.standings import project_standings
+
+        with self.lock:
+            self.refresh_if_changed()
+            now = datetime.now(timezone.utc)
+            fixtures = self.schedule["fixtures"]
+            remaining = [fixture for fixture in fixtures if not fixture["finished"]]
+            columns = self.bundle["metadata"]["feature_columns"]
+            records = []
+            for fixture in remaining:
+                if datetime.fromisoformat(fixture["kickoff"]) <= now:
+                    raise ValueError(
+                        "Fixtures are awaiting results. Try again after the next schedule update."
+                    )
+                if pd.Timestamp(fixture["date"]) <= pd.Timestamp(
+                    self.metadata["data_through"]
+                ):
+                    raise ValueError(
+                        "The fixture schedule needs an update before the final table can be projected."
+                    )
+                values = self.state.features(
+                    fixture["date"], fixture["home_team"], fixture["away_team"]
+                )
+                values.update(
+                    context_features(
+                        self.context,
+                        fixture["date"],
+                        fixture["home_team"],
+                        fixture["away_team"],
+                        now.isoformat(),
+                    )
+                )
+                records.append({column: values[column] for column in columns})
+            probabilities = {}
+            if records:
+                chances = classifier_probabilities(
+                    self.estimator, pd.DataFrame(records)
+                )
+                probabilities = {
+                    fixture["id"]: row for fixture, row in zip(remaining, chances)
+                }
+            return {
+                "season": self.schedule["season"],
+                "rows": project_standings(fixtures, probabilities),
+                "completed_matches": len(fixtures) - len(remaining),
+                "remaining_matches": len(remaining),
+                "model_version": self.metadata["model_version"],
+                "data_through": self.metadata["data_through"],
+                "generated_at": now.isoformat(),
+            }
+
     def predict(self, payload):
         with self.lock:
             self.refresh_if_changed()
@@ -234,6 +290,12 @@ class PredictorHandler(BaseHTTPRequestHandler):
     def do_GET(self) -> None:
         with self.service.lock:
             self.service.refresh_if_changed()
+        if urlparse(self.path).path == "/standings":
+            try:
+                self._send_json(200, self.service.standings())
+            except ValueError as error:
+                self._send_json(503, {"error": str(error)})
+            return
         if urlparse(self.path).path == "/history":
             self._send_json(200, self.service.store.list())
             return

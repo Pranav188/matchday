@@ -162,3 +162,43 @@ def test_service_reloads_new_atomic_model_pointer(service, tmp_path, monkeypatch
     assert service.estimator is bundle["estimator"]
     assert service.state is bundle["state"]
     assert service.metadata["model_version"] == service.pointer_version == "v2"
+
+
+def test_standings_predicts_remaining_matches_in_one_batch_without_archiving(service):
+    service.schedule = {
+        "season": "2026-27",
+        "fixtures": [
+            {
+                "id": "complete",
+                "home_team": "Arsenal",
+                "away_team": "Man United",
+                "finished": True,
+                "home_score": 2,
+                "away_score": 0,
+            },
+            {"id": "scheduled", **service.fixture_lookup["scheduled"]},
+        ],
+    }
+    result = service.standings()
+    service.estimator.predict_proba.assert_called_once()
+    service.store.save.assert_not_called()
+    service.state.update_day.assert_not_called()
+    assert result["completed_matches"] == result["remaining_matches"] == 1
+    assert result["rows"][0]["current_points"] == 3
+    assert result["rows"][0]["projected_points"] == pytest.approx(4.8)
+    assert result["model_version"] == "test"
+
+
+def test_standings_waits_for_missing_results_instead_of_predicting_started_games(
+    service,
+):
+    fixture = {
+        "id": "scheduled",
+        **service.fixture_lookup["scheduled"],
+        "kickoff": "2020-01-01T15:00:00+00:00",
+    }
+    service.schedule = {"season": "2026-27", "fixtures": [fixture]}
+    with pytest.raises(ValueError, match="awaiting results"):
+        service.standings()
+    service.estimator.predict_proba.assert_not_called()
+    service.store.save.assert_not_called()

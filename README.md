@@ -39,6 +39,12 @@ The [advanced evaluation](reports/advanced_evaluation.json) records all experime
 
 The current deployment selects full-history Logistic Regression. Its retrospective accuracy is **48.4%** (always-home: **42.6%**), macro F1 **0.358**, log loss **1.047**, and Brier score **0.627**. Compared with the original tree, accuracy is higher and macro F1 is lower. No draws were selected as the most likely class in this benchmark. Draw probabilities are still estimated; this model does not establish reliable draw classification or future improvement. The separate goals model has mean absolute errors of **0.950 home goals** and **0.832 away goals** on the same retrospective season.
 
+### Projected final table
+
+Open `/standings`, or use **Final table** in the header. This separate page lists all 20 clubs with matches left, current points and expected final points. Completed results award actual points; remaining fixtures contribute `3 × P(win) + P(draw)` to each club. Positions use expected points, with equal totals sharing a position. Decimal points describe averages, not a single simulated season or official goal-difference tiebreaks.
+
+The projection uses the same artifact, historical form and timestamped inputs as match predictions. Form remains fixed until the model refreshes; unknown future injuries and changes in form are not simulated. Calculating the table does not populate the saved forecast archive. Fixtures awaiting completed results must refresh before a new projection is shown.
+
 ### Start and stop
 
 Install Python dependencies using the setup below, then:

@@ -1,0 +1,5 @@
+.navigation { display: flex; align-items: center; gap: 24px; font-size: 13px; color: var(--muted); }
+.navigation a { text-decoration: none; padding: 10px 0; border-bottom: 2px solid transparent; }
+.navigation a[aria-current="page"] { color: var(--accent); border-color: var(--accent); font-weight: 600; }
+.navigation a:hover { color: var(--accent); }
+@media (max-width: 380px) { .navigation { gap: 14px; font-size: 12px; } }
